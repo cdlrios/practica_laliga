@@ -1,15 +1,15 @@
 import shutil
 import io
-from fastapi import FastAPI, File, UploadFile,Form
+from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.responses import JSONResponse
 import pandas as pd
-from typing import  List
+from typing import List
 from pydantic import BaseModel as PydanticBaseModel
 
 class BaseModel(PydanticBaseModel):
     class Config:
         arbitrary_types_allowed = True
-        
+
 class Partido(BaseModel):
     Date:str
     HomeTeam:str
@@ -55,12 +55,8 @@ class Partido(BaseModel):
     VCA:float
     Temporada:int
 
-
-
-
-
 class ListaPartidos(BaseModel):
-    partidos = List[Partido]
+    partidos: List[Partido]  # Add the type annotation
 
 app = FastAPI(
     title="Servidor de datos",
@@ -68,12 +64,9 @@ app = FastAPI(
     version="0.1.0",
 )
 
-
 @app.get("/retrieve_data/")
-#def insercion_endpoint (titulo:str = Form(...), autor:str=Form(...), pais:str=Form(...),genero:str=File(...),  archivo: UploadFile=File(...)):
-def retrieve_data ():
+def retrieve_data():
     todosmisdatos = pd.read_csv('fastapi/dataliga.csv')
     todosmisdatosdict = todosmisdatos.to_dict(orient='records')
-    listado = ListaPartidos()
-    listado.partidos = todosmisdatosdict
+    listado = ListaPartidos(partidos=todosmisdatosdict)  # Provide data during instance creation
     return listado
