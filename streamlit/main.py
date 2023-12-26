@@ -1,44 +1,33 @@
 import streamlit as st
-import pandas as pd
-import requests
+from PIL import Image
+# Importar módulos de las páginas
+from pages import historico as analisis_historico
+from pages import equipos as analisis_por_equipo
 
-@st.cache
-def load_data(url: str):
-    r = requests.get(url)
-    mijson = r.json()
-    listado = mijson['partidos']
-    partidos = pd.DataFrame.from_records(listado)
-    return partidos
+def main():
+    st.sidebar.title("Navegación")
 
-# URL del archivo CSV, ajusta según sea necesario
-url_csv = 'http://localhost:8000/retrieve_data/'
-partidos = load_data(url_csv)
+    # Menú para la navegación
+    choice = st.sidebar.radio("Ir a", 
+                              ["Portada", "Análisis Histórico", "Análisis por Equipo"])
 
-# Métodos para comprobar y quitar valores vacíos, según sea necesario
-def compruebavacios(dataframe):
-    valores_vacios = [column_name for column_name in dataframe.columns if dataframe[column_name].isna().any()]
-    if not valores_vacios:
-        print("No hay valores vacíos en este DataFrame")
-    else:
-        print("Las columnas con valores vacíos son:")
-        for i in valores_vacios:
-            print(i)
+    # Renderizar la página seleccionada
+    if choice == "Portada":
+        show_portada()
+    elif choice == "Análisis Histórico":
+        analisis_historico.show_analisis_historico()
+    elif choice == "Análisis por Equipo":
+        analisis_por_equipo.show_analisis_por_equipo()
 
-def quitavacios(dataframe):
-    dataframe.dropna(axis=1, how='all', inplace=True)
+def show_portada():
+    # Mostrar el logo
+    logo_path = 'data/logo.png'  # Ajusta la ruta según sea necesario
+    logo = Image.open(logo_path)
+    st.image(logo, width=500)
 
-# Comprueba y quita valores vacíos
-compruebavacios(partidos)
-quitavacios(partidos)
+    # Contenido de la página de portada
+    st.title("Campeonato Nacional de Liga - Primera División")
+    st.write("Bienvenido al Dashboard de Análisis de la Liga de Fútbol. Selecciona una opción del menú para explorar los análisis históricos y por equipo.")
 
-# Título de la aplicación Streamlit
-st.title('Campeonato Nacional de Liga de Primera División')
-
-# Selector de equipo
-equipo_seleccionado = st.selectbox('Selecciona un equipo:', partidos['HomeTeam'].unique())
-
-# Filtra los partidos según el equipo seleccionado
-partidos_filtrados = partidos[partidos['HomeTeam'] == equipo_seleccionado]
-
-# Muestra el DataFrame filtrado
-st.dataframe(partidos_filtrados)
+if __name__ == "__main__":
+    main()

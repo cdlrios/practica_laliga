@@ -1,3 +1,2 @@
-pydantic
 fastapi
-pandas
+uvicorn
