@@ -8,12 +8,12 @@ def main():
 
     # Menú para la navegación
     choice = st.sidebar.radio("Ir a", 
-                              ["Portada", "Análisis Histórico", "Análisis por Equipo"])
+                              ["Portada", "Análisis por Temporada", "Análisis por Equipo"])
 
     # Renderizar la página seleccionada
     if choice == "Portada":
         show_portada()
-    elif choice == "Análisis Histórico":
+    elif choice == "Análisis por Temporada":
         analisis_historico.show_analisis_historico()
     elif choice == "Análisis por Equipo":
         analisis_por_equipo.show_analisis_por_equipo()
@@ -26,7 +26,10 @@ def show_portada():
 
     # Contenido de la página de portada
     st.title("Campeonato Nacional de Liga - Primera División")
-    st.write("Bienvenido al Dashboard de Análisis de la Liga de Fútbol. Este dashboard muestra las estadísticas todos los partidos de Primera División desde la temporada 2005-2006 hasta el 23 de diciembre de 2023. Fuente: https://www.football-data.co.uk/")
-
+    st.write("Bienvenido al Dashboard de Análisis de la Liga de Fútbol. ")
+    st.title("Contenido")
+    st.write("En la sección Análisis por temporada encontrarás diferentes datos de los equipos que parcitiparon en esa temporada: Clasifiación general, Tiros, Faltas, Tarjetas, Efectividad al puntuar y Análisis de casas de apuestas. En la sección de Análisis por Equipo encontrarás los datos históricos de aquellos equipos que disputaron la Primera División entre las temporadas 2005-2006 y 2023-2024.")
+    st.title("Datos")
+    st.write("Este dashboard muestra las estadísticas todos los partidos de Primera División desde la temporada 2005-2006 hasta el 23 de diciembre de 2023. Fuente: https://www.football-data.co.uk/")
 if __name__ == "__main__":
     main()
