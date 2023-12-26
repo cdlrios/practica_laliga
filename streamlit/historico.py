@@ -14,7 +14,7 @@ def show_analisis_historico():
     # Cargar los datos
     partidos = load_data()
     st.title("Clasificación general")
-    temporada_seleccionada = st.selectbox("Selecciona una Temporada", options=partidos['Temporada'].unique())
+    temporada_seleccionada = st.selectbox("Selecciona una Temporada ATENCIÓN: El año que se muestra corresponde al año en que termina la temporada EJ: 2023-2024 -> 2024", options=partidos['Temporada'].unique())
      #filtro los partidos de la temporada seleccionada
     partidos = partidos[partidos['Temporada'] == temporada_seleccionada]
     
@@ -243,7 +243,7 @@ def show_analisis_historico():
     st.dataframe(efectividad.sort_values(by="Puntos", ascending=False), use_container_width=True)
 
     st.header("Análisis de Apuestas")
-    st.text("A menor cotización más probabilidad de victoria según la casa de apuestas")
+    st.text("A menor cotización más probabilidad según la casa de apuestas")
     equipo_seleccionado = st.selectbox("Selecciona un Equipo para ver las Cotizaciones de Apuestas", options=partidos['HomeTeam'].unique())
 
     # Filtrar las cotizaciones para el equipo seleccionado
