@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 
 def generar_clasificacion(partidos, temporada):
+  #filtro los partidos de la temporada seleccionada
+  partidos = partidos[partidos['Temporada'] == temporada]
   
   partidos['HP'] = None
   partidos['AP'] = None

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 def load_data():
-    data_path = 'data/liga.csv'  # Asegúrate de que la ruta al archivo es correcta
+    data_path = 'data/liga.csv' 
     data = pd.read_csv(data_path)
     return data
 
@@ -30,26 +30,10 @@ def mostrar_estadisticas_equipo(data, equipo):
 
     st.write(f"Goles Marcados: {goles_marcados}, Goles Recibidos: {goles_recibidos}")
 
-    # Visualización de Goles a lo largo de las Temporadas
-    sns.set(style="whitegrid")
-    plt.figure(figsize=(10, 6))
-    sns.lineplot(data=datos_equipo, x='Temporada', y='FTHG', estimator='sum', label='Goles Marcados en Casa')
-    sns.lineplot(data=datos_equipo, x='Temporada', y='FTAG', estimator='sum', label='Goles Marcados Fuera')
-    plt.xticks(rotation=45)
-    plt.title(f"Evolución de Goles de {equipo}")
-    st.pyplot(plt)
 
 def show_analisis_por_equipo():
     st.title("Análisis por Equipos")
 
     data = load_data()
-
-    # Permitir a los usuarios seleccionar un equipo
     equipo_seleccionado = st.selectbox("Selecciona un Equipo", options=data['HomeTeam'].unique())
-
-    # Mostrar estadísticas para el equipo seleccionado
     mostrar_estadisticas_equipo(data, equipo_seleccionado)
-
-    # Aquí puedes añadir más visualizaciones o análisis específicos
-
-# Esta función será llamada desde main.py
