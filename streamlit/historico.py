@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 def load_data():
@@ -8,7 +10,7 @@ def load_data():
     return partidos
 
 def show_analisis_historico():
-    st.title("Análisis Histórico")
+    st.title("Análisis por temporada")
     # Cargar los datos
     partidos = load_data()
     st.title("Clasificación general")
@@ -103,6 +105,30 @@ def show_analisis_historico():
     cot_vis_empate_wh = partidos.groupby("AwayTeam")["WHD"].mean()
     cot_vis_derrota_wh = partidos.groupby("AwayTeam")["WHH"].mean()
 
+    #Media de cotización de Bet&Win
+    cot_loc_victoria_bw = partidos.groupby("HomeTeam")["BWH"].mean()
+    cot_loc_empate_bw = partidos.groupby("HomeTeam")["BWD"].mean()
+    cot_loc_derrota_bw = partidos.groupby("HomeTeam")["BWA"].mean()
+    cot_vis_victoria_bw = partidos.groupby("AwayTeam")["BWA"].mean()
+    cot_vis_empate_bw = partidos.groupby("AwayTeam")["BWD"].mean()
+    cot_vis_derrota_bw = partidos.groupby("AwayTeam")["BWH"].mean()
+
+    #Media de cotización de Interwetten
+    cot_loc_victoria_iw = partidos.groupby("HomeTeam")["IWH"].mean()
+    cot_loc_empate_iw = partidos.groupby("HomeTeam")["IWD"].mean()
+    cot_loc_derrota_iw = partidos.groupby("HomeTeam")["IWA"].mean()
+    cot_vis_victoria_iw = partidos.groupby("AwayTeam")["IWA"].mean()
+    cot_vis_empate_iw = partidos.groupby("AwayTeam")["IWD"].mean()
+    cot_vis_derrota_iw = partidos.groupby("AwayTeam")["IWH"].mean()
+
+    #Media de cotización de VC Bet
+    cot_loc_victoria_vcb = partidos.groupby("HomeTeam")["VCH"].mean()
+    cot_loc_empate_vcb = partidos.groupby("HomeTeam")["VCD"].mean()
+    cot_loc_derrota_vcb = partidos.groupby("HomeTeam")["VCA"].mean()
+    cot_vis_victoria_vcb = partidos.groupby("AwayTeam")["VCA"].mean()
+    cot_vis_empate_vcb = partidos.groupby("AwayTeam")["VCD"].mean()
+    cot_vis_derrota_vcb = partidos.groupby("AwayTeam")["VCH"].mean()
+
 
 
     #fusiono todas las tablas en una sola
@@ -151,18 +177,39 @@ def show_analisis_historico():
     tarjetas["T. Rojas contrincante VIS"] = tarjetas_rojas_con_vis
     tarjetas["T. Rojas contrincante TOT"] = tarjetas_rojas_con_loc + tarjetas_rojas_con_vis
 
-    #clasificacion["Cot_B365_LOC_V"] = cot_loc_victoria_b365
-    #clasificacion["Cot_B365_LOC_E"] = cot_loc_empate_b365
-    #clasificacion["Cot_B365_LOC_D"] = cot_loc_derrota_b365
-    #clasificacion["Cot_B365_VIS_V"] = cot_vis_victoria_b365
-    #clasificacion["Cot_B365_VIS_E"] = cot_vis_empate_b365
-    #clasificacion["Cot_B365_VIS_D"] = cot_vis_derrota_b365
-    #clasificacion["Cot_WH_LOC_V"] = cot_loc_victoria_wh
-    #clasificacion["Cot_WH_LOC_E"] = cot_loc_empate_wh
-    #clasificacion["Cot_WH_LOC_D"] = cot_loc_derrota_wh
-    #clasificacion["Cot_WH_VIS_V"] = cot_vis_victoria_wh
-    #clasificacion["Cot_WH_VIS_E"] = cot_vis_empate_wh
-    #clasificacion["Cot_WH_VIS_D"] = cot_vis_derrota_wh
+    #creo cotizaciones apuestas
+    apuestas = pd.DataFrame(clasificacion["TotalPoints"])
+    apuestas["B365_LOC_V"] = cot_loc_victoria_b365
+    apuestas["B365_LOC_E"] = cot_loc_empate_b365
+    apuestas["B365_LOC_D"] = cot_loc_derrota_b365
+    apuestas["B365_VIS_V"] = cot_vis_victoria_b365
+    apuestas["B365_VIS_E"] = cot_vis_empate_b365
+    apuestas["B365_VIS_D"] = cot_vis_derrota_b365
+    apuestas["WH_LOC_V"] = cot_loc_victoria_wh
+    apuestas["WH_LOC_E"] = cot_loc_empate_wh
+    apuestas["WH_LOC_D"] = cot_loc_derrota_wh
+    apuestas["WH_VIS_V"] = cot_vis_victoria_wh
+    apuestas["WH_VIS_E"] = cot_vis_empate_wh
+    apuestas["WH_VIS_D"] = cot_vis_derrota_wh
+    apuestas["BS_LOC_V"] = cot_loc_victoria_bw
+    apuestas["BS_LOC_E"] = cot_loc_empate_bw
+    apuestas["BS_LOC_D"] = cot_loc_derrota_bw
+    apuestas["BS_VIS_V"] = cot_vis_victoria_bw
+    apuestas["BS_VIS_E"] = cot_vis_empate_bw
+    apuestas["BS_VIS_D"] = cot_vis_derrota_bw
+    apuestas["IW_LOC_V"] = cot_loc_victoria_iw
+    apuestas["IW_LOC_E"] = cot_loc_empate_iw
+    apuestas["IW_LOC_D"] = cot_loc_derrota_iw
+    apuestas["IW_VIS_V"] = cot_vis_victoria_iw
+    apuestas["IW_VIS_E"] = cot_vis_empate_iw
+    apuestas["IW_VIS_D"] = cot_vis_derrota_iw
+    apuestas["VCB_LOC_V"] = cot_loc_victoria_vcb
+    apuestas["VCB_LOC_E"] = cot_loc_empate_vcb
+    apuestas["VCB_LOC_D"] = cot_loc_derrota_vcb
+    apuestas["VCB_VIS_V"] = cot_vis_victoria_vcb
+    apuestas["VCB_VIS_E"] = cot_vis_empate_vcb
+    apuestas["VCB_VIS_D"] = cot_vis_derrota_vcb
+
 
     efectividad = pd.DataFrame(clasificacion["TotalPoints"])
     efectividad.columns = ["Puntos"]
@@ -194,3 +241,36 @@ def show_analisis_historico():
     st.header("Efectividad")
     st.text("Porcentaje de puntos conseguidos entre puntos posibles")
     st.dataframe(efectividad.sort_values(by="Puntos", ascending=False), use_container_width=True)
+
+    st.header("Análisis de Apuestas")
+    st.text("A menor cotización más probabilidad de victoria según la casa de apuestas")
+    equipo_seleccionado = st.selectbox("Selecciona un Equipo para ver las Cotizaciones de Apuestas", options=partidos['HomeTeam'].unique())
+
+    # Filtrar las cotizaciones para el equipo seleccionado
+    cotizaciones_equipo = apuestas.loc[equipo_seleccionado]
+
+    # Preparar los datos para el gráfico
+    categorias = ['Victoria', 'Empate', 'Derrota']
+    casas_apuestas = ['B365', 'WH', 'BS', 'IW', 'VCB']
+    valores_casas = {casa: [cotizaciones_equipo[f'{casa}_LOC_V'], 
+                            cotizaciones_equipo[f'{casa}_LOC_E'], 
+                            cotizaciones_equipo[f'{casa}_LOC_D']] for casa in casas_apuestas}
+
+    # Crear el gráfico de barras
+    fig, ax = plt.subplots(figsize=(10, 6))
+    bar_width = 0.15
+    for i, casa in enumerate(casas_apuestas):
+        ax.bar([x + i * bar_width for x in range(len(categorias))], 
+               valores_casas[casa], 
+               width=bar_width, 
+               label=casa)
+
+    # Añadir detalles al gráfico
+    ax.set_xlabel('Tipo de Apuesta')
+    ax.set_ylabel('Cotización Media')
+    ax.set_title(f'Cotizaciones de Apuestas para {equipo_seleccionado}')
+    ax.set_xticks([r + bar_width for r in range(len(categorias))])
+    ax.set_xticklabels(categorias)
+    ax.legend()
+
+    st.pyplot(fig)
