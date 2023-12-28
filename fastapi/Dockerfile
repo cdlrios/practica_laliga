@@ -1,20 +1,15 @@
-# Use an official Python runtime as a parent image
-FROM python:3.8-slim
+FROM tiangolo/uvicorn-gunicorn
 
-# Set the working directory to /app
-WORKDIR /app
+RUN mkdir /fastapi
 
-# Copy the current directory contents into the container at /app
-COPY . /app
+COPY requirements.txt /fastapi
 
-# Install any needed packages specified in requirements.txt
+WORKDIR /fastapi
+
 RUN pip install -r requirements.txt
 
-# Make port 8000 available to the world outside this container
+COPY . /fastapi
+
 EXPOSE 8000
 
-# Define environment variable
-ENV NAME World
-
-# Run main.py when the container launches
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8000"]

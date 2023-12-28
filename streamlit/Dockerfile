@@ -14,7 +14,7 @@ RUN pip install -r requirements.txt
 EXPOSE 8501
 
 # Copy the data directory into the container at /app/data
-COPY data /app/data
+#COPY data /app/data
 
 # Define environment variable
 ENV NAME World

@@ -2,17 +2,25 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import requests
 
 
-def load_data():
-    data_path = 'data/liga.csv'
-    partidos = pd.read_csv(data_path)
-    return partidos
+# URL de la API de FastAPI
+url = 'http://127.0.0.1:8000/match/1'
+
+# Realizar la petición HTTP a la API
+response = requests.get(url)
+
+if response.status_code == 200:
+    # Procesar la respuesta
+    partidos = response.json()
+else:
+    st.error("Error al obtener los datos")
+    
 
 def show_analisis_historico():
     st.title("Análisis por temporada")
     # Cargar los datos
-    partidos = load_data()
     st.title("Clasificación general")
     temporada_seleccionada = st.selectbox("Selecciona una Temporada ATENCIÓN: El año que se muestra corresponde al año en que termina la temporada EJ: 2023-2024 -> 2024", options=partidos['Temporada'].unique())
      #filtro los partidos de la temporada seleccionada
