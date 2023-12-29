@@ -4,6 +4,18 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import requests
 
+@st.cache_data
+def load_data(url: str):
+    r = requests.get(url)
+    if r.status_code != 200:
+        return None
+    mijson = r.json()
+    listado = mijson['partidos']
+    df = pd.DataFrame.from_records(listado)
+    return df
+    
+data = load_data('http://fastapi:8000/retrieve_data/')
+    
 def mostrar_estadisticas_equipo(data, equipo):
     # Filtrar datos para el equipo seleccionado
     datos_equipo = data[(data['HomeTeam'] == equipo) | (data['AwayTeam'] == equipo)]
@@ -53,9 +65,8 @@ def calcular_puntos_por_temporada(partidos, equipo):
 
     return puntos_por_temporada
 
-def show_analisis_por_equipo(data):
+def show_analisis_por_equipo(data, equipo_seleccionado):
     st.title("Análisis por Equipos")
-    equipo_seleccionado = st.selectbox("Selecciona un Equipo", options=data['HomeTeam'].unique())
     mostrar_estadisticas_equipo(data, equipo_seleccionado)
 
     # Obtener estadísticas para el equipo seleccionado
@@ -84,3 +95,8 @@ def show_analisis_por_equipo(data):
     plt.ylabel("Puntos")
     plt.xticks(rotation=45)
     st.pyplot(plt)
+
+# Crear una interfaz de usuario con Streamlit
+equipos = data['HomeTeam'].unique()
+equipo_seleccionado = st.selectbox("Selecciona un Equipo", options=equipos)
+show_analisis_por_equipo(data=data, equipo_seleccionado=equipo_seleccionado)

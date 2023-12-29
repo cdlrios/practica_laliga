@@ -4,7 +4,18 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import requests
 
+@st.cache_data
+def load_data(url: str):
+    r = requests.get(url)
+    if r.status_code != 200:
+        return None
+    mijson = r.json()
+    listado = mijson['partidos']
+    df = pd.DataFrame.from_records(listado)
+    return df
     
+data = load_data('http://fastapi:8000/retrieve_data/')
+
 
 def show_analisis_historico(partidos):
     st.title("Análisis por temporada")
@@ -160,18 +171,12 @@ def show_analisis_historico(partidos):
     #creo tabla tarjetas
     tarjetas = pd.DataFrame(clasificacion["TotalPoints"])
     tarjetas.columns = ["Puntos"]
-    tarjetas["T. Amarillas recibidas LOC"] = tarjetas_amarillas_loc
-    tarjetas["T. Amarillas recibidas VIS"] = tarjetas_amarillas_vis
-    tarjetas["T. Amarillas recibidas TOT"] = tarjetas_amarillas_loc + tarjetas_amarillas_vis
-    tarjetas["T. Amarillas contrincante LOC"] = tarjetas_amarillas_con_loc
-    tarjetas["T. Amarillas contrincante VIS"] = tarjetas_amarillas_con_vis
-    tarjetas["T. Amarillas contrincante TOT"] = tarjetas_amarillas_con_loc + tarjetas_amarillas_con_vis
-    tarjetas["T. Rojas recibidas LOC"] = tarjetas_rojas_loc
-    tarjetas["T. Rojas recibidas VIS"] = tarjetas_rojas_vis
-    tarjetas["T. Rojas recibidas TOT"] = tarjetas_rojas_loc + tarjetas_rojas_vis
-    tarjetas["T. Rojas contrincante LOC"] = tarjetas_rojas_con_loc
-    tarjetas["T. Rojas contrincante VIS"] = tarjetas_rojas_con_vis
-    tarjetas["T. Rojas contrincante TOT"] = tarjetas_rojas_con_loc + tarjetas_rojas_con_vis
+    tarjetas["Saldo Amarillas"] =  (tarjetas_amarillas_con_loc + tarjetas_amarillas_con_vis) - (tarjetas_amarillas_loc + tarjetas_amarillas_vis)
+    tarjetas["Saldo Rojas"] = (tarjetas_rojas_con_loc + tarjetas_rojas_con_vis) - (tarjetas_rojas_loc + tarjetas_rojas_vis)
+    tarjetas["T. Amarillas recibidas"] = tarjetas_amarillas_loc + tarjetas_amarillas_vis
+    tarjetas["T. Amarillas contrincante"] = tarjetas_amarillas_con_loc + tarjetas_amarillas_con_vis
+    tarjetas["T. Rojas recibidas"] = tarjetas_rojas_loc + tarjetas_rojas_vis
+    tarjetas["T. Rojas contrincante"] = tarjetas_rojas_con_loc + tarjetas_rojas_con_vis
 
     #creo cotizaciones apuestas
     apuestas = pd.DataFrame(clasificacion["TotalPoints"])
@@ -213,18 +218,18 @@ def show_analisis_historico(partidos):
     efectividad["Efectividad visitante"] = clasificacion["AP"] / 57
     efectividad["Efectividad total"] = clasificacion["TotalPoints"] / 114
 
-    #clasificacion["Goles_por_partido_loc"] = goles_loc/19
-    #clasificacion["Goles_por_partido_vis"] = goles_vis/19
-    #clasificacion["Goles_por_partido"] = (goles_loc + goles_vis)/38
-    #clasificacion["Goles_rec_partido_loc"] = goles_con_loc/19
-    #clasificacion["Goles_rec_partido_vis"] = goles_con_vis/19
-    #clasificacion["Goles_rec_partido"] = (goles_con_loc + goles_con_vis)/38
-    #clasificacion["Gol_prom_partido_loc"] = clasificacion["Goles_por_partido_loc"] - clasificacion["Goles_rec_partido_loc"]
-    #clasificacion["Gol_prom_partido_vis"] = clasificacion["Goles_por_partido_vis"] - clasificacion["Goles_rec_partido_vis"]
-    #clasificacion["Gol_prom_tot"] = clasificacion["Gol_prom_partido_loc"] + clasificacion["Gol_prom_partido_vis"]
+    goles_efic = pd.DataFrame(clasificacion["TotalPoints"])
+    goles_efic.columns = ["Puntos"]
+    goles_efic["Goles Marcados por partido"] = (goles_loc + goles_vis)/38
+    goles_efic["Goles Recibidos por partido"] = (goles_con_loc + goles_con_vis)/38
+    goles_efic["Gol promedio por partido"] = ((goles_loc + goles_vis) - (goles_con_loc + goles_con_vis))/38
     
     # Mostrar las tablas
     st.dataframe(clasificacion.sort_values(by="TotalPoints", ascending=False), use_container_width=True)
+
+    st.header("Goles")
+    st.dataframe(goles_efic.sort_values(by="Puntos", ascending=False), use_container_width=True)
+
     st.header("Tiros")
     st.dataframe(tiros.sort_values(by="Puntos", ascending=False), use_container_width=True)
 
@@ -232,7 +237,9 @@ def show_analisis_historico(partidos):
     st.dataframe(faltas.sort_values(by="Puntos", ascending=False), use_container_width=True)
 
     st.header("Tarjetas")
+    st.text("Saldo: Tarjetas mostradas al contrincante - Tarjetas mostradas al equipo")
     st.dataframe(tarjetas.sort_values(by="Puntos", ascending=False), use_container_width=True)
+    st.text("CONTEXTO: El FC Barcelona pagó 7,5 millones de euros entre 2001 y 2018 al vicepresidente del Comité Técnico de Árbitros")
 
     st.header("Efectividad")
     st.text("Porcentaje de puntos conseguidos entre puntos posibles")
@@ -270,3 +277,5 @@ def show_analisis_historico(partidos):
     ax.legend()
 
     st.pyplot(fig)
+
+show_analisis_historico(data)
