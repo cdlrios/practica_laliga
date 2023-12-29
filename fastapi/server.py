@@ -54,21 +54,15 @@ class Partido(BaseModel):
 
 
 class ListadoPartidos(BaseModel):
-    partidos = List[Partido]
+    partidos: List[Partido]
 
-app = FastAPI(
-    title="Servidor de datos",
-    description="""Servimos datos de contratos, pero podríamos hacer muchas otras cosas, la la la.""",
-    version="0.1.0",
-)
+app = FastAPI()
 
 
 @app.get("/retrieve_data/")
-#def insercion_endpoint (titulo:str = Form(...), autor:str=Form(...), pais:str=Form(...),genero:str=File(...),  archivo: UploadFile=File(...)):
-def retrieve_data ():
-    todosmisdatos = pd.read_csv('./data/partidos.csv')
-    todosmisdatos = todosmisdatos.fillna(0)
-    todosmisdatosdict = todosmisdatos.to_dict(orient='records')
-    listado = ListadoPartidos()
-    listado.contratos = todosmisdatosdict
+async def retrieve_data ():
+    todosmisdatos = pd.read_csv('./data/liga.csv',sep=',')
+    todosmisdatos.fillna(0, inplace=True)
+    partidos_list = todosmisdatos.to_dict(orient='records')
+    listado = ListadoPartidos(partidos=partidos_list)
     return listado

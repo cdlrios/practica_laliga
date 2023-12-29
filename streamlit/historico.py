@@ -4,21 +4,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import requests
 
-
-# URL de la API de FastAPI
-url = 'http://127.0.0.1:8000/match/1'
-
-# Realizar la petición HTTP a la API
-response = requests.get(url)
-
-if response.status_code == 200:
-    # Procesar la respuesta
-    partidos = response.json()
-else:
-    st.error("Error al obtener los datos")
     
 
-def show_analisis_historico():
+def show_analisis_historico(partidos):
     st.title("Análisis por temporada")
     # Cargar los datos
     st.title("Clasificación general")

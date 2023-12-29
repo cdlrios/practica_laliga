@@ -2,6 +2,22 @@ import streamlit as st
 from PIL import Image
 import historico as analisis_historico
 import equipos as analisis_por_equipo
+import requests
+import pandas as pd
+
+# Función para cargar datos
+@st.cache_data
+def load_data(url: str):
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = pd.DataFrame(response.json())
+        return data
+    else:
+        st.error("Error al cargar los datos")
+        return pd.DataFrame()
+
+data_url = 'http://127.0.0.1:8000/retrieve_data/'
+data = load_data(data_url)
 
 def main():
     st.sidebar.title("Navegación")
@@ -14,9 +30,9 @@ def main():
     if choice == "Portada":
         show_portada()
     elif choice == "Análisis por Temporada":
-        analisis_historico.show_analisis_historico()
+        analisis_historico.show_analisis_historico(partidos=data)
     elif choice == "Análisis por Equipo":
-        analisis_por_equipo.show_analisis_por_equipo()
+        analisis_por_equipo.show_analisis_por_equipo(data=data)
 
 def show_portada():
     # Mostrar el logo
